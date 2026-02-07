@@ -1,0 +1,28 @@
+<% layout("/layouts/boilerplate") -%>
+<body>
+    <h3>All Tasks</h3>
+    <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2">
+        <% for(let task of allTasks) { %>
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <p class="card-text">
+                    <h4>
+                        <a href="/tasks/<%= task._id %>" class="task-link">
+                            <%= task.title %>
+                        </a>
+                    </h4>
+                    <%= task.description %>
+                    </p>
+                    <p class="card-text">
+                        <strong>Status:</strong>
+                        <span class="badge status-badge <%= task.status.toLowerCase().replace(" ", "-") %>">
+                            <%= task.status %>
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <% } %>
+    </div>
+</body>
+
+

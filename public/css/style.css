@@ -1,0 +1,81 @@
+body{
+    background-color: pink;
+}
+
+h1 {
+    letter-spacing: 0.2rem;
+}
+
+.lead {
+    font-size: 1.3rem;
+}
+
+/* Navbar */
+.navbar{
+    height: 5rem;
+}
+
+.fa-layer-group{
+    color:black;
+    font-size: 2rem;
+}
+
+.nav-link{
+    color: black !important;
+}
+
+/* Cards */
+.card{
+    margin-bottom: 2rem;
+    border-radius: 1rem;
+    margin: 1rem;
+    padding: 1rem;
+}
+
+.card-body{
+    padding: 0 !important;
+    border-radius: 1rem;
+}
+
+.task-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.task-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.card:hover{
+    background-color: black;
+    color: white;
+}
+
+/* Status badges */
+.status-badge {
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Pending → Yellow */
+.pending {
+    background-color: #f1c40f;
+    color: black;
+}
+
+/* In Progress → Blue */
+.in-progress {
+    background-color: #195780;
+    color: violet;
+}
+
+ /* Completed → Green  */
+.completed {
+    background-color: #2ecc71;
+    color: white;
+}
+
+

@@ -1,0 +1,15 @@
+<% layout("/layouts/boilerplate") -%>
+<body>
+    <h3>Create a New Task</h3>
+    <form method="POST" action="/tasks">
+        <div class="mb-3">
+            <label for="title" class="form-label">Enter task</label>
+            <input name="task[title]" placeholder="enter task" type="text" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="task[description]" type="text" class="form-control"></textarea>
+        </div>
+        <button class="btn btn-dark add-btn">Add</button>
+    </form>
+</body>
