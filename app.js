@@ -12,6 +12,7 @@ const ejsMate = require("ejs-mate");
 
 const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/Taskify";
 
+
 async function main() {
     await mongoose.connect(MONGO_URL);
 }
@@ -25,9 +26,6 @@ main()
     console.log(err);
 });
 
-async function main() {
-    await mongoose.connect(MONGO_URL);
-}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
