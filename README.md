@@ -23,7 +23,26 @@ It allows users to create, view, edit, update status, and delete tasks with a cl
 | Database | MongoDB & Mongoose |
 | Deployment | Local or cloud hosts (optional) |
 
----
+## ⚙️ Setup Instructions
+
+Follow the steps below to run Taskify locally on your machine.
+- 1️⃣ Clone the repository
+git clone https://github.com/priycodes/taskify.git
+cd taskify
+- 2️⃣ Install dependencies
+Make sure Node.js and npm are installed, then run:
+npm install
+- 3️⃣ Start MongoDB
+Ensure MongoDB is running locally.
+Default connection used:
+mongodb://127.0.0.1:27017/Taskify
+- 4️⃣ Run the application
+node app.js
+You should see:
+connected to DB
+server is listening to port 8080
+- 5️⃣ Open in browser
+Visit: http://localhost:8080
 
 ## 🧾 Screenshots
 
