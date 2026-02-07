@@ -1,4 +1,10 @@
 {
+  "engine": {
+    "node": "v24.12.0"
+  }
+}
+
+{
   "name": "taskify",
   "version": "1.0.0",
   "description": "",
