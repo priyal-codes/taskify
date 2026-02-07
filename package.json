@@ -1,21 +1,15 @@
 {
-  "engine": {
-    "node": "v24.12.0"
-  }
-}
-
-{
   "name": "taskify",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "Task Management Web Application",
+  "main": "app.js",
   "type": "commonjs",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "dotenv": "^17.2.4",
     "ejs": "^4.0.1",
