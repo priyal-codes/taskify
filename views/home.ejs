@@ -1,10 +1,39 @@
 <% layout("/layouts/boilerplate") -%>
-    <div class="text-center mt-5">
-        <h1 class="display-3 fw-bold">TASKIFY</h1>
-        <p class="lead mt-3">
-            Simple task management made easy.
+
+<div class="row justify-content-center align-items-center py-5">
+    <div class="col-lg-8 text-center py-5">
+        <div class="mb-4">
+            <span class="badge rounded-pill text-black bg-light border px-3 py-2 small fw-semibold">Taskify Version 1.0</span>
+        </div>
+        <h1 class="display-3 fw-extrabold mb-3" style="letter-spacing: -0.04em;">Simple task management, refined.</h1>
+        <p class="lead text-secondary mx-auto mb-5" style="max-width: 600px; font-size: 1.15rem;">
+            An elegant, minimalist workspace to capture your thoughts, organize your flow, and keep your productivity focused.
         </p>
-        <a href="/tasks" class="btn btn-dark btn-lg mt-4">
-            View Tasks
-        </a>
+        
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="/tasks" class="btn btn-dark btn-lg px-4 py-3">
+                Get Started
+            </a>
+            <% if (!locals.currentUser) { %>
+                <a href="/login" class="btn btn-outline-dark btn-lg px-4 py-3">
+                    Sign In
+                </a>
+            <% } %>
+        </div>
+
+        <div class="row mt-5 pt-5 justify-content-center text-start g-4 border-top">
+            <div class="col-md-4">
+                <h5 class="fw-bold"><i class="fa-solid fa-bolt me-2"></i> Fast & Fluid</h5>
+                <p class="text-secondary small">Lightweight monochromatic design built for speed. No bloat, just performance.</p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="fw-bold"><i class="fa-solid fa-lock me-2"></i> Private Tasks</h5>
+                <p class="text-secondary small">Your tasks are private and mapped securely to your authenticated account.</p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="fw-bold"><i class="fa-solid fa-circle-check me-2"></i> Track Progress</h5>
+                <p class="text-secondary small">Easily toggle task status from Pending, In Progress, to Completed.</p>
+            </div>
+        </div>
     </div>
+</div>

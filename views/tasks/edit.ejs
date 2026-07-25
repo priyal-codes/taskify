@@ -1,16 +1,25 @@
 <% layout("/layouts/boilerplate") -%>
-<body>
 
-    <h3>Edit your Task</h3>
-    <form method="POST" action="/tasks/<%= task._id %>?_method=PUT">
-        <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-            <input name="task[title]" value="<%= task.title %>" type="text" class="form-control">
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="mb-4">
+            <a href="/tasks/<%= task._id %>" class="btn btn-outline-dark btn-sm"><i class="fa-solid fa-arrow-left me-2"></i> Cancel</a>
         </div>
-        <div>
-            <label for="description" class="form-label">Description</label>
-            <textarea name="task[description]" class="form-control"><%= task.description %></textarea>
+
+        <div class="card p-4">
+            <h3 class="fw-bold mb-4">Edit Task</h3>
+            <form method="POST" action="/tasks/<%= task._id %>?_method=PUT" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Task Title</label>
+                    <input name="task[title]" id="title" value="<%= task.title %>" type="text" class="form-control" required>
+                    <div class="invalid-feedback">Please enter a task title.</div>
+                </div>
+                <div class="mb-4">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="task[description]" id="description" rows="4" class="form-control"><%= task.description %></textarea>
+                </div>
+                <button class="btn btn-dark w-100 py-3">Save Changes</button>
+            </form>
         </div>
-        <button class="btn btn-dark edit-btn mt-3">Edit</button>
-    </form>
-</body>
+    </div>
+</div>

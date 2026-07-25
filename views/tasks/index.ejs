@@ -1,28 +1,50 @@
 <% layout("/layouts/boilerplate") -%>
-<body>
-    <!-- <h3>All Tasks</h3> -->
-    <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2">
+
+<div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
+    <div>
+        <h2 class="mb-1">Your Workspace</h2>
+        <p class="text-secondary small mb-0">Manage and track your active tasks</p>
+    </div>
+    <a href="/tasks/new" class="btn btn-dark d-flex align-items-center gap-2">
+        <i class="fa-solid fa-plus small"></i> Add New Task
+    </a>
+</div>
+
+<% if (allTasks.length === 0) { %>
+    <div class="row justify-content-center py-5">
+        <div class="col-md-6 text-center py-5 border border-dashed rounded-4" style="border-style: dashed !important; border-width: 2px !important; border-color: var(--border-color) !important;">
+            <i class="fa-regular fa-folder-open display-4 text-secondary mb-4"></i>
+            <h4 class="fw-bold">No tasks found</h4>
+            <p class="text-secondary mb-4">Create your first task to populate your workspace dashboard.</p>
+            <a href="/tasks/new" class="btn btn-dark">Get Started</a>
+        </div>
+    </div>
+<% } else { %>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <% for(let task of allTasks) { %>
-            <div class="card" style="width: 18rem;">
-                <div class="card-body">
-                    <p class="card-text">
-                    <h4>
-                        <a href="/tasks/<%= task._id %>" class="task-link">
-                            <%= task.title %>
-                        </a>
-                    </h4>
-                    <%= task.description %>
-                    </p>
-                    <p class="card-text">
-                        <strong>Status:</strong>
-                        <span class="badge status-badge <%= task.status.toLowerCase().replace(" ", "-") %>">
-                            <%= task.status %>
-                        </span>
-                    </p>
+            <div class="col">
+                <div class="card h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                            <h4 class="card-title mb-0">
+                                <a href="/tasks/<%= task._id %>" class="task-link">
+                                    <%= task.title %>
+                                </a>
+                            </h4>
+                            <span class="status-badge <%= task.status.toLowerCase().replace(' ', '-') %>">
+                                <%= task.status %>
+                            </span>
+                        </div>
+                        <p class="text-secondary small mb-4">
+                            <%= task.description || "No description provided." %>
+                        </p>
+                    </div>
+                    <div class="border-top pt-3 mt-auto d-flex justify-content-between align-items-center">
+                        <span class="text-secondary small"><i class="fa-regular fa-clock me-1"></i> <%= new Date(task.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'}) %></span>
+                        <a href="/tasks/<%= task._id %>" class="btn btn-outline-dark btn-sm py-1 px-3">Manage</a>
+                    </div>
                 </div>
             </div>
-            <% } %>
+        <% } %>
     </div>
-</body>
-
-
+<% } %>
