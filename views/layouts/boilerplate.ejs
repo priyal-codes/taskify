@@ -10,7 +10,30 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <%- include("../includes/navbar.ejs") %>
+    <nav class="navbar navbar-expand-md border-bottom sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><i class="fa-solid fa-layer-group"></i> Taskify</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav me-auto">
+                    <a class="nav-link" href="/">Home</a>
+                    <a class="nav-link" href="/tasks">All Tasks</a>
+                    <a class="nav-link" href="/tasks/new">Add New Task</a>
+                </div>
+                <div class="navbar-nav ms-auto">
+                    <% if (!currentUser) { %>
+                        <a class="nav-link" href="/login">Login</a>
+                        <a class="nav-link" href="/signup">Sign Up</a>
+                    <% } else { %>
+                        <span class="nav-link text-dark">Welcome, <strong><%= currentUser.username %></strong></span>
+                        <a class="nav-link" href="/logout">Logout</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
     
     <div class="container py-5 flex-grow-1">
         <%- body %>

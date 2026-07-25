@@ -44,8 +44,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     }
 }));
 
@@ -53,7 +52,13 @@ app.use(session({
 app.use(async (req, res, next) => {
     if (req.session.userId) {
         try {
-            res.locals.currentUser = await User.findById(req.session.userId);
+            const user = await User.findById(req.session.userId);
+            if (user) {
+                res.locals.currentUser = user;
+            } else {
+                req.session.userId = undefined;
+                res.locals.currentUser = null;
+            }
         } catch (err) {
             res.locals.currentUser = null;
         }
@@ -63,10 +68,23 @@ app.use(async (req, res, next) => {
     next();
 });
 
+// Pass res.locals to ejs-mate layout rendering options
+app.use((req, res, next) => {
+    const _render = res.render;
+    res.render = function (view, options, fn) {
+        options = options || {};
+        if (typeof options === "object") {
+            options.currentUser = res.locals.currentUser;
+        }
+        return _render.call(this, view, options, fn);
+    };
+    next();
+});
+
 // Middleware to protect routes
 const isLoggedIn = (req, res, next) => {
     if (!req.session.userId) {
-        return res.render("users/login.ejs", { error: "You must be logged in to view/manage tasks." });
+        return res.redirect("/login?error=You must be logged in to access that page.");
     }
     next();
 };
@@ -74,6 +92,9 @@ const isLoggedIn = (req, res, next) => {
 
 //home page
 app.get("/", (req, res) => {
+    if (req.session.userId) {
+        return res.redirect("/tasks");
+    }
     res.render("home.ejs");
 });
 
@@ -82,6 +103,9 @@ app.get("/", (req, res) => {
 
 // Signup Render
 app.get("/signup", (req, res) => {
+    if (req.session.userId) {
+        return res.redirect("/tasks");
+    }
     res.render("users/signup.ejs");
 });
 
@@ -100,8 +124,11 @@ app.post("/signup", async (req, res, next) => {
         await newUser.save();
         
         // Log user in automatically
-        req.session.userId = newUser._id;
-        res.redirect("/tasks");
+        req.session.userId = newUser._id.toString();
+        req.session.save((err) => {
+            if (err) return next(err);
+            res.redirect("/tasks");
+        });
     } catch (err) {
         next(err);
     }
@@ -109,7 +136,11 @@ app.post("/signup", async (req, res, next) => {
 
 // Login Render
 app.get("/login", (req, res) => {
-    res.render("users/login.ejs");
+    if (req.session.userId) {
+        return res.redirect("/tasks");
+    }
+    const error = req.query.error || null;
+    res.render("users/login.ejs", { error });
 });
 
 // Login Logic
@@ -124,8 +155,11 @@ app.post("/login", async (req, res, next) => {
         if (!isMatch) {
             return res.render("users/login.ejs", { error: "Invalid username or password." });
         }
-        req.session.userId = user._id;
-        res.redirect("/tasks");
+        req.session.userId = user._id.toString();
+        req.session.save((err) => {
+            if (err) return next(err);
+            res.redirect("/tasks");
+        });
     } catch (err) {
         next(err);
     }
@@ -133,7 +167,11 @@ app.post("/login", async (req, res, next) => {
 
 // Logout
 app.get("/logout", (req, res) => {
-    req.session.destroy(() => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.log("Error destroying session:", err);
+        }
+        res.clearCookie("connect.sid"); // Clear session cookie
         res.redirect("/");
     });
 });
