@@ -10,11 +10,11 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
+const { MongoStore } = require("connect-mongo");
 const bcrypt = require("bcryptjs");
 
 
-const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/Taskify";
+const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/taskify";
 const SECRET = process.env.SECRET || "mysupersecretkeyfordevelopment";
 
 
