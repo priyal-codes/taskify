@@ -10,10 +10,12 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const bcrypt = require("bcryptjs");
 
 
 const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/Taskify";
+const SECRET = process.env.SECRET || "mysupersecretkeyfordevelopment";
 
 
 async function main() {
@@ -37,9 +39,22 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+const store = MongoStore.create({
+    mongoUrl: MONGO_URL,
+    crypto: {
+        secret: SECRET
+    },
+    touchAfter: 24 * 3600
+});
+
+store.on("error", (err) => {
+    console.log("ERROR in MONGO SESSION STORE", err);
+});
+
 // Session Configuration
 app.use(session({
-    secret: "mysupersecretkeyfordevelopment",
+    store: store,
+    secret: SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -247,8 +262,9 @@ app.delete("/tasks/:id", isLoggedIn, async(req, res) => {
 //     res.send("successful testing");
 // });
 
-app.listen(8080, () => {
-    console.log("server is listening to port 8080");
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
 });
 
 
