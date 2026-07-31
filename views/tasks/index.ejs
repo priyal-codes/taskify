@@ -58,35 +58,24 @@
     </div>
 </div>
 
-<!-- Controls Bar (Search, Filters, View Switcher) -->
-<div class="control-bar">
-    <div class="d-flex flex-grow-1 gap-2 align-items-center" style="max-width: 450px;">
-        <div class="input-group">
-            <span class="input-group-text bg-card border-end-0 text-secondary" style="border-color: var(--border-color);">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </span>
-            <input type="text" id="taskSearchInput" class="form-control border-start-0 ps-0" placeholder="Search tasks by title or content...">
-        </div>
+<!-- Controls Bar (Filters & View Switcher) -->
+<div class="control-bar d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <!-- Filter buttons -->
+    <div class="filter-btn-group" id="filterGroup">
+        <button class="filter-btn active" data-filter="all">All (<%= totalCount %>)</button>
+        <button class="filter-btn" data-filter="Pending">Pending (<%= pendingCount %>)</button>
+        <button class="filter-btn" data-filter="In Progress">In Progress (<%= progressCount %>)</button>
+        <button class="filter-btn" data-filter="Completed">Done (<%= completedCount %>)</button>
     </div>
 
-    <div class="d-flex gap-2 align-items-center flex-wrap">
-        <!-- Filter buttons -->
-        <div class="filter-btn-group" id="filterGroup">
-            <button class="filter-btn active" data-filter="all">All (<%= totalCount %>)</button>
-            <button class="filter-btn" data-filter="Pending">Pending (<%= pendingCount %>)</button>
-            <button class="filter-btn" data-filter="In Progress">In Progress (<%= progressCount %>)</button>
-            <button class="filter-btn" data-filter="Completed">Done (<%= completedCount %>)</button>
-        </div>
-
-        <!-- View switcher buttons -->
-        <div class="view-btn-group">
-            <button class="view-btn active" id="kanbanViewBtn" title="Kanban View">
-                <i class="fa-solid fa-table-columns"></i>
-            </button>
-            <button class="view-btn" id="gridViewBtn" title="Grid View">
-                <i class="fa-solid fa-grip"></i>
-            </button>
-        </div>
+    <!-- View switcher buttons -->
+    <div class="view-btn-group">
+        <button class="view-btn active" id="kanbanViewBtn" title="Kanban View">
+            <i class="fa-solid fa-table-columns"></i>
+        </button>
+        <button class="view-btn" id="gridViewBtn" title="Grid View">
+            <i class="fa-solid fa-grip"></i>
+        </button>
     </div>
 </div>
 
@@ -111,7 +100,7 @@
             </div>
             <div class="kanban-cards">
                 <% for(let task of allTasks.filter(t => t.status === 'Pending')) { %>
-                    <div class="kanban-card task-item" data-status="Pending" data-title="<%= task.title.toLowerCase() %>" data-desc="<%= (task.description || '').toLowerCase() %>">
+                    <div class="kanban-card task-item" data-status="Pending">
                         <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                             <h5 class="mb-0 fs-6 fw-bold">
                                 <a href="/tasks/<%= task._id %>" class="task-link"><%= task.title %></a>
@@ -142,7 +131,7 @@
             </div>
             <div class="kanban-cards">
                 <% for(let task of allTasks.filter(t => t.status === 'In Progress')) { %>
-                    <div class="kanban-card task-item" data-status="In Progress" data-title="<%= task.title.toLowerCase() %>" data-desc="<%= (task.description || '').toLowerCase() %>">
+                    <div class="kanban-card task-item" data-status="In Progress">
                         <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                             <h5 class="mb-0 fs-6 fw-bold">
                                 <a href="/tasks/<%= task._id %>" class="task-link"><%= task.title %></a>
@@ -176,7 +165,7 @@
             </div>
             <div class="kanban-cards">
                 <% for(let task of allTasks.filter(t => t.status === 'Completed')) { %>
-                    <div class="kanban-card task-item" data-status="Completed" data-title="<%= task.title.toLowerCase() %>" data-desc="<%= (task.description || '').toLowerCase() %>" style="opacity: 0.85;">
+                    <div class="kanban-card task-item" data-status="Completed" style="opacity: 0.85;">
                         <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                             <h5 class="mb-0 fs-6 fw-bold text-decoration-line-through text-secondary">
                                 <a href="/tasks/<%= task._id %>" class="task-link text-secondary"><%= task.title %></a>
@@ -201,7 +190,7 @@
     <!-- 2. GRID VIEW (Alternative) -->
     <div id="gridView" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 d-none">
         <% for(let task of allTasks) { %>
-            <div class="col task-item" data-status="<%= task.status %>" data-title="<%= task.title.toLowerCase() %>" data-desc="<%= (task.description || '').toLowerCase() %>">
+            <div class="col task-item" data-status="<%= task.status %>">
                 <div class="card card-hover h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
@@ -230,13 +219,13 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const searchInput = document.getElementById('taskSearchInput');
         const filterBtns = document.querySelectorAll('.filter-btn');
         const kanbanViewBtn = document.getElementById('kanbanViewBtn');
         const gridViewBtn = document.getElementById('gridViewBtn');
         const kanbanView = document.getElementById('kanbanView');
         const gridView = document.getElementById('gridView');
         const taskItems = document.querySelectorAll('.task-item');
+        const kanbanColumns = document.querySelectorAll('.kanban-column');
 
         // View Switcher logic
         function setView(viewName) {
@@ -260,38 +249,32 @@
         if (kanbanViewBtn) kanbanViewBtn.addEventListener('click', () => setView('kanban'));
         if (gridViewBtn) gridViewBtn.addEventListener('click', () => setView('grid'));
 
-        // Search & Filter Logic
-        let currentFilter = 'all';
-
-        function applyFilterAndSearch() {
-            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-
-            taskItems.forEach(item => {
-                const status = item.getAttribute('data-status');
-                const title = item.getAttribute('data-title') || '';
-                const desc = item.getAttribute('data-desc') || '';
-
-                const matchesFilter = (currentFilter === 'all' || status === currentFilter);
-                const matchesSearch = query === '' || title.includes(query) || desc.includes(query);
-
-                if (matchesFilter && matchesSearch) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        if (searchInput) {
-            searchInput.addEventListener('input', applyFilterAndSearch);
-        }
-
+        // Filter Logic
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 filterBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                currentFilter = btn.getAttribute('data-filter');
-                applyFilterAndSearch();
+                const selectedFilter = btn.getAttribute('data-filter');
+
+                // Filter grid cards
+                taskItems.forEach(item => {
+                    const status = item.getAttribute('data-status');
+                    if (selectedFilter === 'all' || status === selectedFilter) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Filter kanban columns
+                kanbanColumns.forEach(col => {
+                    const colStatus = col.getAttribute('data-column');
+                    if (selectedFilter === 'all' || colStatus === selectedFilter) {
+                        col.style.display = '';
+                    } else {
+                        col.style.display = 'none';
+                    }
+                });
             });
         });
     });
