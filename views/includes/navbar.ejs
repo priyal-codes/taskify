@@ -17,13 +17,13 @@
                     <i class="fa-solid fa-moon" id="themeIcon"></i>
                 </button>
                 <% if (!locals.currentUser) { %>
-                    <a class="nav-link" href="/login">Login</a>
-                    <a class="btn btn-dark btn-sm px-3" href="/signup">Sign Up</a>
+                    <a class="btn btn-outline-dark" href="/login">Login</a>
+                    <a class="btn btn-dark" href="/signup">Sign Up</a>
                 <% } else { %>
                     <span class="nav-link font-mono small text-secondary">
                         <i class="fa-regular fa-user me-1"></i> <%= currentUser.username %>
                     </span>
-                    <a class="btn btn-outline-dark btn-sm px-3" href="/logout">Logout</a>
+                    <a class="btn btn-outline-dark" href="/logout">Logout</a>
                 <% } %>
             </div>
         </div>

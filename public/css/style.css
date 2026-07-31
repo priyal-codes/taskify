@@ -129,6 +129,17 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--bg-secondary);
 }
 
+.navbar .btn {
+    height: 38px;
+    padding: 0 1.1rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Theme Switcher Toggle */
 .theme-toggle-btn {
     background-color: var(--bg-secondary);
