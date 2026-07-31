@@ -1,48 +1,52 @@
 <% layout("/layouts/boilerplate") -%>
 
 <div class="row justify-content-center">
-    <div class="col-lg-7">
+    <div class="col-lg-8">
         <div class="mb-4">
-            <a href="/tasks" class="btn btn-outline-dark btn-sm"><i class="fa-solid fa-arrow-left me-2"></i> Back to workspace</a>
+            <a href="/tasks" class="btn btn-outline-dark btn-sm">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to workspace
+            </a>
         </div>
 
-        <div class="card p-4">
+        <div class="card p-4 p-md-5">
             <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4 gap-3">
                 <div>
-                    <h2 class="mb-1 fw-bold"><%= task.title %></h2>
-                    <span class="text-secondary small">Created on <%= new Date(task.createdAt).toLocaleString() %></span>
+                    <span class="status-badge <%= task.status.toLowerCase().replace(' ', '-') %> mb-2">
+                        <%= task.status %>
+                    </span>
+                    <h2 class="mb-1 fw-bold display-6"><%= task.title %></h2>
+                    <span class="font-mono text-muted small">
+                        <i class="fa-regular fa-clock me-1"></i> Created on <%= new Date(task.createdAt).toLocaleString() %>
+                    </span>
                 </div>
-                <span class="status-badge <%= task.status.toLowerCase().replace(' ', '-') %> px-3 py-2">
-                    <%= task.status %>
-                </span>
             </div>
 
-            <div class="mb-4">
-                <h6 class="form-label text-secondary">Description</h6>
-                <div class="p-3 bg-light rounded-3" style="border: 1px solid var(--border-color); background-color: var(--bg-secondary) !important;">
-                    <p class="mb-0 text-dark" style="white-space: pre-wrap; line-height: 1.6;"><%= task.description || "No description provided." %></p>
+            <div class="mb-5">
+                <label class="form-label">Task Description</label>
+                <div class="p-4 rounded-3 border bg-secondary">
+                    <p class="mb-0 text-primary fs-6" style="white-space: pre-wrap; line-height: 1.7;"><%= task.description || "No detailed description provided for this task." %></p>
                 </div>
             </div>
 
             <div class="row g-4 align-items-end border-top pt-4">
                 <div class="col-md-7">
-                    <form method="POST" action="/tasks/<%= task._id %>?_method=PUT" class="d-flex gap-2">
+                    <form method="POST" action="/tasks/<%= task._id %>?_method=PUT" class="d-flex gap-2 align-items-end">
                         <div class="flex-grow-1">
-                            <label for="status" class="form-label">Update Status</label>
+                            <label for="status" class="form-label">Update Pipeline Status</label>
                             <select name="task[status]" id="status" class="form-select">
-                                <option value="Pending" <%=task.status==="Pending" ? "selected" : "" %>>Pending</option>
-                                <option value="In Progress" <%=task.status==="In Progress" ? "selected" : "" %>>In Progress</option>
-                                <option value="Completed" <%=task.status==="Completed" ? "selected" : "" %>>Completed</option>
+                                <option value="Pending" <%= task.status === "Pending" ? "selected" : "" %>>Pending (To Do)</option>
+                                <option value="In Progress" <%= task.status === "In Progress" ? "selected" : "" %>>In Progress</option>
+                                <option value="Completed" <%= task.status === "Completed" ? "selected" : "" %>>Completed (Done)</option>
                             </select>
                         </div>
-                        <button class="btn btn-dark mt-auto" style="height: calc(1.5em + 1.5rem + 2px);">Update</button>
+                        <button class="btn btn-dark">Update</button>
                     </form>
                 </div>
                 <div class="col-md-5 d-flex justify-content-md-end gap-2">
-                    <a href="/tasks/<%= task._id %>/edit" class="btn btn-outline-dark w-50">
+                    <a href="/tasks/<%= task._id %>/edit" class="btn btn-outline-dark flex-grow-1">
                         <i class="fa-regular fa-pen-to-square me-1"></i> Edit
                     </a>
-                    <form method="POST" action="/tasks/<%= task._id %>?_method=DELETE" class="w-50">
+                    <form method="POST" action="/tasks/<%= task._id %>?_method=DELETE" class="flex-grow-1" onsubmit="return confirm('Are you sure you want to delete this task?');">
                         <button class="btn btn-outline-danger w-100">
                             <i class="fa-regular fa-trash-can me-1"></i> Delete
                         </button>

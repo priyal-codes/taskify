@@ -1,22 +1,31 @@
-<nav class="navbar navbar-expand-md border-bottom sticky-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/"><i class="fa-solid fa-layer-group"></i> Taskify</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
-            <span class="navbar-toggler-icon"></span>
+<nav class="navbar navbar-expand-md sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fa-solid fa-square text-dark border border-dark me-1" style="font-size: 0.9rem;"></i> 
+            Taskify 
+            <span class="brand-badge">B&W</span>
+        </a>
+        <button class="navbar-toggler border-0 text-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+            <i class="fa-solid fa-bars"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav me-auto">
-                <a class="nav-link" href="/">Home</a>
-                <a class="nav-link" href="/tasks">All Tasks</a>
-                <a class="nav-link" href="/tasks/new">Add New Task</a>
+                <a class="nav-link" href="/"><i class="fa-solid fa-house me-1 small"></i> Home</a>
+                <a class="nav-link" href="/tasks"><i class="fa-solid fa-layer-group me-1 small"></i> Workspace</a>
+                <a class="nav-link" href="/tasks/new"><i class="fa-solid fa-plus me-1 small"></i> New Task</a>
             </div>
-            <div class="navbar-nav ms-auto">
+            <div class="navbar-nav ms-auto align-items-md-center gap-2">
+                <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Dark / Light Mode" aria-label="Toggle Dark Mode">
+                    <i class="fa-solid fa-moon" id="themeIcon"></i>
+                </button>
                 <% if (!locals.currentUser) { %>
                     <a class="nav-link" href="/login">Login</a>
-                    <a class="nav-link" href="/signup">Sign Up</a>
+                    <a class="btn btn-dark btn-sm px-3" href="/signup">Sign Up</a>
                 <% } else { %>
-                    <span class="nav-link text-dark">Welcome, <strong><%= currentUser.username %></strong></span>
-                    <a class="nav-link" href="/logout">Logout</a>
+                    <span class="nav-link font-mono small text-secondary">
+                        <i class="fa-regular fa-user me-1"></i> <%= currentUser.username %>
+                    </span>
+                    <a class="btn btn-outline-dark btn-sm px-3" href="/logout">Logout</a>
                 <% } %>
             </div>
         </div>

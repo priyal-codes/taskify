@@ -1,29 +1,208 @@
 <% layout("/layouts/boilerplate") -%>
 
-<div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
-    <div>
-        <h2 class="mb-1">Your Workspace</h2>
-        <p class="text-secondary small mb-0">Manage and track your active tasks</p>
+<%
+    let totalCount = allTasks.length;
+    let pendingCount = allTasks.filter(t => t.status === 'Pending').length;
+    let progressCount = allTasks.filter(t => t.status === 'In Progress').length;
+    let completedCount = allTasks.filter(t => t.status === 'Completed').length;
+    let percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+%>
+
+<!-- Workspace Header & Stats Banner -->
+<div class="stats-banner mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+        <div>
+            <h2 class="mb-1 fw-bold">Workspace Overview</h2>
+            <p class="text-secondary small mb-0 font-mono">TRACKING <%= totalCount %> ACTIVE TASKS ACROSS KANBAN PIPELINE</p>
+        </div>
+        <a href="/tasks/new" class="btn btn-dark">
+            <i class="fa-solid fa-plus"></i> Add New Task
+        </a>
     </div>
-    <a href="/tasks/new" class="btn btn-dark d-flex align-items-center gap-2">
-        <i class="fa-solid fa-plus small"></i> Add New Task
-    </a>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-box">
+                <span class="text-secondary small font-mono d-block mb-1">TOTAL TASKS</span>
+                <span class="stat-number"><%= totalCount %></span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-box">
+                <span class="text-secondary small font-mono d-block mb-1">PENDING</span>
+                <span class="stat-number"><%= pendingCount %></span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-box">
+                <span class="text-secondary small font-mono d-block mb-1">IN PROGRESS</span>
+                <span class="stat-number"><%= progressCount %></span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-box">
+                <span class="text-secondary small font-mono d-block mb-1">COMPLETED</span>
+                <span class="stat-number"><%= completedCount %></span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="font-mono small text-secondary">PRODUCTIVITY COMPLETION</span>
+            <span class="font-mono small fw-bold"><%= percent %>%</span>
+        </div>
+        <div class="progress-mono">
+            <div class="progress-mono-bar" style="width: <%= percent %>%;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Controls Bar (Search, Filters, View Switcher) -->
+<div class="control-bar">
+    <div class="d-flex flex-grow-1 gap-2 align-items-center" style="max-width: 450px;">
+        <div class="input-group">
+            <span class="input-group-text bg-card border-end-0 text-secondary" style="border-color: var(--border-color);">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input type="text" id="taskSearchInput" class="form-control border-start-0 ps-0" placeholder="Search tasks by title or content...">
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+        <!-- Filter buttons -->
+        <div class="filter-btn-group" id="filterGroup">
+            <button class="filter-btn active" data-filter="all">All (<%= totalCount %>)</button>
+            <button class="filter-btn" data-filter="Pending">Pending (<%= pendingCount %>)</button>
+            <button class="filter-btn" data-filter="In Progress">In Progress (<%= progressCount %>)</button>
+            <button class="filter-btn" data-filter="Completed">Done (<%= completedCount %>)</button>
+        </div>
+
+        <!-- View switcher buttons -->
+        <div class="view-btn-group">
+            <button class="view-btn active" id="kanbanViewBtn" title="Kanban View">
+                <i class="fa-solid fa-table-columns"></i>
+            </button>
+            <button class="view-btn" id="gridViewBtn" title="Grid View">
+                <i class="fa-solid fa-grip"></i>
+            </button>
+        </div>
+    </div>
 </div>
 
 <% if (allTasks.length === 0) { %>
-    <div class="row justify-content-center py-5">
-        <div class="col-md-6 text-center py-5 border border-dashed rounded-4" style="border-style: dashed !important; border-width: 2px !important; border-color: var(--border-color) !important;">
-            <i class="fa-regular fa-folder-open display-4 text-secondary mb-4"></i>
-            <h4 class="fw-bold">No tasks found</h4>
-            <p class="text-secondary mb-4">Create your first task to populate your workspace dashboard.</p>
-            <a href="/tasks/new" class="btn btn-dark">Get Started</a>
-        </div>
+    <div class="empty-box py-5">
+        <i class="fa-regular fa-square-check display-3 text-muted mb-3 d-block"></i>
+        <h4 class="fw-bold mb-2">No tasks found</h4>
+        <p class="text-secondary mb-4 small" style="max-width: 400px; margin: 0 auto;">Your workspace is empty. Create your first task to start organizing your workflow.</p>
+        <a href="/tasks/new" class="btn btn-dark">Create First Task</a>
     </div>
 <% } else { %>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
+    <!-- 1. KANBAN BOARD VIEW (Default) -->
+    <div id="kanbanView" class="kanban-board">
+        <!-- Column 1: Pending -->
+        <div class="kanban-column" data-column="Pending">
+            <div class="kanban-header">
+                <span class="kanban-title">
+                    <i class="fa-regular fa-circle me-1"></i> TO DO
+                </span>
+                <span class="kanban-count"><%= pendingCount %></span>
+            </div>
+            <div class="kanban-cards">
+                <% for(let task of allTasks.filter(t => t.status === 'Pending')) { %>
+                    <div class="kanban-card task-item" data-status="Pending" data-title="<%= task.title.toLowerCase() %>" data-desc="<%= (task.description || '').toLowerCase() %>">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <h5 class="mb-0 fs-6 fw-bold">
+                                <a href="/tasks/<%= task._id %>" class="task-link"><%= task.title %></a>
+                            </h5>
+                        </div>
+                        <% if(task.description) { %>
+                            <p class="text-secondary small mb-3 text-truncate" style="max-width: 100%;"><%= task.description %></p>
+                        <% } %>
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                            <span class="font-mono text-muted" style="font-size: 0.72rem;"><i class="fa-regular fa-clock me-1"></i> <%= new Date(task.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'}) %></span>
+                            <form method="POST" action="/tasks/<%= task._id %>?_method=PUT" class="d-inline">
+                                <input type="hidden" name="task[status]" value="In Progress">
+                                <button class="btn btn-mono-outline py-0 px-2 font-mono" style="font-size: 0.7rem;" title="Move to In Progress">Start &rarr;</button>
+                            </form>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Column 2: In Progress -->
+        <div class="kanban-column" data-column="In Progress">
+            <div class="kanban-header">
+                <span class="kanban-title">
+                    <i class="fa-solid fa-spinner me-1"></i> IN PROGRESS
+                </span>
+                <span class="kanban-count"><%= progressCount %></span>
+            </div>
+            <div class="kanban-cards">
+                <% for(let task of allTasks.filter(t => t.status === 'In Progress')) { %>
+                    <div class="kanban-card task-item" data-status="In Progress" data-title="<%= task.title.toLowerCase() %>" data-desc="<%= (task.description || '').toLowerCase() %>">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <h5 class="mb-0 fs-6 fw-bold">
+                                <a href="/tasks/<%= task._id %>" class="task-link"><%= task.title %></a>
+                            </h5>
+                        </div>
+                        <% if(task.description) { %>
+                            <p class="text-secondary small mb-3 text-truncate"><%= task.description %></p>
+                        <% } %>
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                            <form method="POST" action="/tasks/<%= task._id %>?_method=PUT" class="d-inline">
+                                <input type="hidden" name="task[status]" value="Pending">
+                                <button class="btn btn-outline-dark py-0 px-2 font-mono" style="font-size: 0.7rem;" title="Move to Pending">&larr; Back</button>
+                            </form>
+                            <form method="POST" action="/tasks/<%= task._id %>?_method=PUT" class="d-inline">
+                                <input type="hidden" name="task[status]" value="Completed">
+                                <button class="btn btn-dark py-0 px-2 font-mono" style="font-size: 0.7rem;" title="Mark Completed">Done &check;</button>
+                            </form>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Column 3: Completed -->
+        <div class="kanban-column" data-column="Completed">
+            <div class="kanban-header">
+                <span class="kanban-title">
+                    <i class="fa-regular fa-circle-check me-1"></i> DONE
+                </span>
+                <span class="kanban-count"><%= completedCount %></span>
+            </div>
+            <div class="kanban-cards">
+                <% for(let task of allTasks.filter(t => t.status === 'Completed')) { %>
+                    <div class="kanban-card task-item" data-status="Completed" data-title="<%= task.title.toLowerCase() %>" data-desc="<%= (task.description || '').toLowerCase() %>" style="opacity: 0.85;">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <h5 class="mb-0 fs-6 fw-bold text-decoration-line-through text-secondary">
+                                <a href="/tasks/<%= task._id %>" class="task-link text-secondary"><%= task.title %></a>
+                            </h5>
+                        </div>
+                        <% if(task.description) { %>
+                            <p class="text-muted small mb-3 text-truncate"><%= task.description %></p>
+                        <% } %>
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                            <span class="font-mono text-muted" style="font-size: 0.72rem;"><i class="fa-solid fa-check me-1"></i> Completed</span>
+                            <form method="POST" action="/tasks/<%= task._id %>?_method=PUT" class="d-inline">
+                                <input type="hidden" name="task[status]" value="In Progress">
+                                <button class="btn btn-outline-dark py-0 px-2 font-mono" style="font-size: 0.7rem;" title="Reopen Task">Reopen</button>
+                            </form>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. GRID VIEW (Alternative) -->
+    <div id="gridView" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 d-none">
         <% for(let task of allTasks) { %>
-            <div class="col">
-                <div class="card h-100 d-flex flex-column justify-content-between">
+            <div class="col task-item" data-status="<%= task.status %>" data-title="<%= task.title.toLowerCase() %>" data-desc="<%= (task.description || '').toLowerCase() %>">
+                <div class="card card-hover h-100 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
                             <h4 class="card-title mb-0">
@@ -40,7 +219,7 @@
                         </p>
                     </div>
                     <div class="border-top pt-3 mt-auto d-flex justify-content-between align-items-center">
-                        <span class="text-secondary small"><i class="fa-regular fa-clock me-1"></i> <%= new Date(task.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'}) %></span>
+                        <span class="font-mono text-muted" style="font-size: 0.75rem;"><i class="fa-regular fa-clock me-1"></i> <%= new Date(task.createdAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric'}) %></span>
                         <a href="/tasks/<%= task._id %>" class="btn btn-outline-dark btn-sm py-1 px-3">Manage</a>
                     </div>
                 </div>
@@ -48,3 +227,72 @@
         <% } %>
     </div>
 <% } %>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('taskSearchInput');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const kanbanViewBtn = document.getElementById('kanbanViewBtn');
+        const gridViewBtn = document.getElementById('gridViewBtn');
+        const kanbanView = document.getElementById('kanbanView');
+        const gridView = document.getElementById('gridView');
+        const taskItems = document.querySelectorAll('.task-item');
+
+        // View Switcher logic
+        function setView(viewName) {
+            if (viewName === 'grid') {
+                kanbanView.classList.add('d-none');
+                gridView.classList.remove('d-none');
+                kanbanViewBtn.classList.remove('active');
+                gridViewBtn.classList.add('active');
+            } else {
+                gridView.classList.add('d-none');
+                kanbanView.classList.remove('d-none');
+                gridViewBtn.classList.remove('active');
+                kanbanViewBtn.classList.add('active');
+            }
+            localStorage.setItem('taskify-view-pref', viewName);
+        }
+
+        const savedView = localStorage.getItem('taskify-view-pref') || 'kanban';
+        setView(savedView);
+
+        if (kanbanViewBtn) kanbanViewBtn.addEventListener('click', () => setView('kanban'));
+        if (gridViewBtn) gridViewBtn.addEventListener('click', () => setView('grid'));
+
+        // Search & Filter Logic
+        let currentFilter = 'all';
+
+        function applyFilterAndSearch() {
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            taskItems.forEach(item => {
+                const status = item.getAttribute('data-status');
+                const title = item.getAttribute('data-title') || '';
+                const desc = item.getAttribute('data-desc') || '';
+
+                const matchesFilter = (currentFilter === 'all' || status === currentFilter);
+                const matchesSearch = query === '' || title.includes(query) || desc.includes(query);
+
+                if (matchesFilter && matchesSearch) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', applyFilterAndSearch);
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                applyFilterAndSearch();
+            });
+        });
+    });
+</script>

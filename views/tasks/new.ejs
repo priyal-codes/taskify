@@ -1,24 +1,36 @@
 <% layout("/layouts/boilerplate") -%>
 
-<div class="row justify-content-center">
-    <div class="col-lg-6">
+<div class="row justify-content-center py-3">
+    <div class="col-lg-7">
         <div class="mb-4">
-            <a href="/tasks" class="btn btn-outline-dark btn-sm"><i class="fa-solid fa-arrow-left me-2"></i> Back to workspace</a>
+            <a href="/tasks" class="btn btn-outline-dark btn-sm">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to workspace
+            </a>
         </div>
 
-        <div class="card p-4">
-            <h3 class="fw-bold mb-4">Create New Task</h3>
+        <div class="card p-4 p-md-5">
+            <div class="mb-4 border-bottom pb-3">
+                <span class="status-badge pending font-mono mb-2">NEW TASK</span>
+                <h3 class="fw-bold mb-1">Create Task</h3>
+                <p class="text-secondary small mb-0">Add a new action item to your monochrome workspace.</p>
+            </div>
+
             <form method="POST" action="/tasks" class="needs-validation" novalidate>
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="title" class="form-label">Task Title</label>
-                    <input name="task[title]" id="title" placeholder="Enter task title..." type="text" class="form-control" required>
+                    <input name="task[title]" id="title" placeholder="What needs to be done?" type="text" class="form-control" required autofocus>
                     <div class="invalid-feedback">Please enter a task title.</div>
                 </div>
+
                 <div class="mb-4">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea name="task[description]" id="description" placeholder="Enter task description (optional)..." rows="4" class="form-control"></textarea>
+                    <label for="description" class="form-label">Description (Optional)</label>
+                    <textarea name="task[description]" id="description" placeholder="Provide extra details, scope, or notes..." rows="5" class="form-control"></textarea>
                 </div>
-                <button class="btn btn-dark w-100 py-3">Create Task</button>
+
+                <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                    <a href="/tasks" class="btn btn-outline-dark">Cancel</a>
+                    <button class="btn btn-dark px-4">Create Task</button>
+                </div>
             </form>
         </div>
     </div>

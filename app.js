@@ -240,7 +240,8 @@ app.post("/tasks", isLoggedIn, async(req, res) => {
 app.put("/tasks/:id", isLoggedIn, async(req, res) => {
     let {id} = req.params;
     await Task.findOneAndUpdate({ _id: id, user: req.session.userId }, { ...req.body.task });
-    res.redirect(`/tasks/${id}`);
+    let redirectUrl = req.headers.referer || `/tasks/${id}`;
+    res.redirect(redirectUrl);
 });
 
 // Delete Route
