@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="/tasks">
+        <a class="navbar-brand" href="<%= currentUser ? '/tasks' : '/' %>">
             <i class="fa-solid fa-layer-group"></i> 
             Taskify
         </a>
@@ -9,8 +9,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav me-auto">
-                <a class="nav-link" href="/tasks"><i class="fa-solid fa-table-columns me-1 small"></i> Workspace</a>
-                <a class="nav-link" href="/tasks/new"><i class="fa-solid fa-plus me-1 small"></i> New Task</a>
+                <% if (currentUser) { %>
+                    <a class="nav-link" href="/tasks/new"><i class="fa-solid fa-plus me-1 small"></i> New Task</a>
+                <% } %>
             </div>
             <div class="navbar-nav ms-auto align-items-md-center gap-2">
                 <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Dark / Light Mode" aria-label="Toggle Dark Mode">

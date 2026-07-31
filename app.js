@@ -105,11 +105,8 @@ const isLoggedIn = (req, res, next) => {
 };
 
 
-//home page
+// home page
 app.get("/", (req, res) => {
-    if (req.session.userId) {
-        return res.redirect("/tasks");
-    }
     res.render("home.ejs");
 });
 
