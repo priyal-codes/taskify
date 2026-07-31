@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <%- include("../includes/navbar.ejs") %>
+    <%- include("../includes/navbar.ejs", { currentUser: (typeof currentUser !== 'undefined' ? currentUser : (locals.currentUser || null)) }) %>
     
     <div class="container py-4 flex-grow-1">
         <%- body %>

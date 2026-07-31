@@ -16,7 +16,7 @@
                 <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Dark / Light Mode" aria-label="Toggle Dark Mode">
                     <i class="fa-solid fa-moon" id="themeIcon"></i>
                 </button>
-                <% if (!locals.currentUser) { %>
+                <% if (!currentUser) { %>
                     <a class="btn btn-outline-dark" href="/login">Login</a>
                     <a class="btn btn-dark" href="/signup">Sign Up</a>
                 <% } else { %>
